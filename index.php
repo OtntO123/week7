@@ -1,67 +1,20 @@
 <?php
-$dns = 'mysql:host=sql.njit.edu;dbname=kz233';
-$username = 'kz233';
-$password = 'imperil89';
-try {
-$conn = new PDO($dns, $username, $password);
+ini_set('display_errors', 'On');	//Debug
+error_reporting(E_ALL | E_STRICT);
+
+header("Cache-Control: no-cache, must-revalidate");	//No Cache
+header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
+
+class Manage {	//include class for spl_autoload
+    public static function autoload($class) {
+        //you can put any file name or directory here
+        include $class . '.php';
+    }
 }
 
-catch(PDOException $e)
-{
-	echo "Connection failed: " . $e->getMessage();
-}
 
-$sql = "select id,email,fname,password from accounts  ";
 
-global $conn;
-global $results;
-try {
-	$q = $conn->prepare($sql);
-	$q->execute();
-	$results = $q->fetchAll();
-	$q->closeCursor();	
-	} catch (PDOException $e) {
-	echo ("500 Internal Server Error\n\n"."There was a SQL error:\n\n" . $e->getMessage());
-	}	
+spl_autoload_register(array('Manage', 'autoload'));	//autoload classes
+$obj = new main();	//instantiate the program object
 
-$string = '';		
-		$string .= "<html>";
-		$string .= "<head>
-		<style>
-		table {
-		    border-collapse: collapse;
-		    width: 100%;
-		}
-		th, td {
-		    text-align: left;
-		    padding: 8px;
-		}
-		th {
-		    background-color: Indigo;
-		    color: white;
-		}
-		tr:nth-child(even){background-color: #f2f2f2}
-		tr:hover {background-color: LightSkyBlue}
-		caption { 
-			display: table-caption;
-			text-align: center;
-			color: MidnightBlue;
-			font-size:200%;
-		}
-		</style>
-		</head>";
-		$string .= "<body>";
-		$string .= "<div style='overflow-x:auto;'>";
-		$string .= "<table style='width:100%'><caption>" . "filename" . "</caption>";
-		$appp = $results;
-		foreach($appp as $i => $k) {	
-			$string .= "<tr>";
-			foreach($k as $j) {	//split data
-				$string .= ($i == 0) ? "<th>$j</th>" : "<td>$j</td>";
-        		}
-        		$string .= "</tr>";
-		}
-		$string .= "</table></div>";
-		$string .= "</body>";
-echo $string;
 ?>
